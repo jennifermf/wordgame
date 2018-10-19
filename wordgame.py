@@ -1,4 +1,4 @@
-"""a hangman-style game; future updates will allow choosing how long the word should be!
+"""a hangman-style game where no one is actually hanged; future updates will allow choosing how long the word should be!
 
 wordfile.txt source:
 http://www.ef.com/english-resources/english-vocabulary/top-3000-words/
@@ -6,13 +6,24 @@ http://www.ef.com/english-resources/english-vocabulary/top-3000-words/
 
 import random
 
-def pick_word():         # picks from a list of words
-
+# picks from wordlist.txt based on length input (if any)
+def pick_word(wordlength):
     wordfile = [line.strip() for line in open('wordslist.txt')]
-    return random.choice(wordfile).upper()
+    randomword = random.choice(wordfile).upper()
+    if wordlength == '':
+        return randomword
+
+    # determine validity of length input and return appropriate choice
+    sortedwords = sorted(wordfile, key=len)
+    if (not isinstance(wordlength, int) or (len(sortedwords[-1]) < int(wordlength)) or (int(wordlength) < 2)):
+        print('Oops! I do not know any words that length. Let\'s play a random game!')
+    else:
+        while len(randomword) != int(wordlength):
+            randomword = random.choice(wordfile).upper()
+    return randomword
 
 
-def check(answer,guesses,guess):
+def check(answer, guesses, guess):
     status = ''
     matches = 0
     for letter in answer:
@@ -32,14 +43,15 @@ def check(answer,guesses,guess):
 
 def main():
     print('\nWelcome to non-violent Hangman! Let\'s begin!')
-    answer = pick_word()
+    wordlength = input('\nChoose your word length, or leave blank for a random choice: ')
+    answer = pick_word(wordlength)
     choices = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
     guesses = []
     guessed = False
     print('This word contains {} letters.'.format(len(answer)))
     while not guessed:
         text = 'Enter 1 letter or {}-letter word.\nYour choices are: {}:  '.format(len(answer), choices)
-        guess = raw_input(text)
+        guess = input(text)
         guess = guess.upper()
         choices = choices.replace(guess, '-')
         if guess in guesses:
@@ -63,4 +75,5 @@ def main():
             print('That was an invalid entry.')
     print('Nice job! The word is {}. You won in {} tries. \nThanks for playing! '.format(answer, len(guesses)))
 main()
+
 # future iterations: repeat the game as often as the user wishes
