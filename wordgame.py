@@ -1,10 +1,22 @@
-"""a hangman-style game where no one is actually hanged; future updates will allow choosing how long the word should be!
+"""a hangman-style game where no one is actually hanged
 
-wordfile.txt source:
+wordfile.txt modified from source:
 http://www.ef.com/english-resources/english-vocabulary/top-3000-words/
 """
 
 import random
+
+# varify length input
+def check_length(wordlength):
+    if (wordlength == ''):
+        pass
+    else:
+        try:
+            wordlength = int(wordlength)
+        except:
+            print('Oops! I do not know any words that length. Let\'s play a random game!')
+            wordlength = ''
+    return wordlength
 
 # picks from wordlist.txt based on length input (if any)
 def pick_word(wordlength):
@@ -15,7 +27,7 @@ def pick_word(wordlength):
 
     # determine validity of length input and return appropriate choice
     sortedwords = sorted(wordfile, key=len)
-    if (not isinstance(wordlength, int) or (len(sortedwords[-1]) < int(wordlength)) or (int(wordlength) < 2)):
+    if ((len(sortedwords[-1]) < wordlength) or (wordlength < 2)):
         print('Oops! I do not know any words that length. Let\'s play a random game!')
     else:
         while len(randomword) != int(wordlength):
@@ -43,7 +55,7 @@ def check(answer, guesses, guess):
 
 def main():
     print('\nWelcome to non-violent Hangman! Let\'s begin!')
-    wordlength = input('\nChoose your word length, or leave blank for a random choice: ')
+    wordlength = check_length(input('\nChoose your word length, or leave blank for a random choice: '))
     answer = pick_word(wordlength)
     choices = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
     guesses = []
@@ -72,7 +84,7 @@ def main():
             else:
                 print('\n{}'.format(result))
         else:
-            print('That was an invalid entry.')
+            print('Sorry! Try again!')
     print('Nice job! The word is {}. You won in {} tries. \nThanks for playing! '.format(answer, len(guesses)))
 main()
 
